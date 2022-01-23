@@ -1,0 +1,31 @@
+﻿@page "/fetchdata"
+@using BlazorDataBinding.Shared
+@inject HttpClient Http
+
+<h1>Customers Information</h1>
+<p>This component demonstrates fetching data from external WebApi and allow data filtering.</p>
+
+@if (forecasts == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <C1TextBox Class="filled-text-box" @bind-Text="filterText" Style="@("width:100%;margin-bottom:5px;")" Placeholder="Type to search..." />
+    <FlexGrid  ItemsSource="@forecasts" Style="C1GridStyle.GridStyle" RowStyle="C1GridStyle.RowStyle" AlternatingRowStyle="C1GridStyle.AlternatingRowStyle" ColumnHeaderStyle = "C1GridStyle.ColumnHeaderStyle">
+        <FlexGridBehaviors>
+        <FullTextFilterBehavior FilterString="@filterText"  MatchNumbers="true" />
+    </FlexGridBehaviors>
+    </FlexGrid>
+}
+
+@code {
+    private Customers[] forecasts;
+
+    public string filterText = "";
+    protected override async Task OnInitializedAsync()
+    {
+        forecasts = await Http.GetFromJsonAsync<Customers[]>("https://demodata.grapecity.com/wwi/api/v1/customers");
+    }
+
+}

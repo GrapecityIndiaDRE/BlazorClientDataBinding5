@@ -1,0 +1,29 @@
+﻿@page "/counter"
+
+
+@using BlazorDataBinding.Shared
+@inject HttpClient Http
+
+<h1>Weather forecast</h1>
+
+<p>This component demonstrates fetching data from WebApi hosted on SameDomain.</p>
+
+@if (forecasts == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <FlexGrid  ItemsSource="@forecasts" Style="C1GridStyle.GridStyle" RowStyle="C1GridStyle.RowStyle" AlternatingRowStyle="C1GridStyle.AlternatingRowStyle" ColumnHeaderStyle = "C1GridStyle.ColumnHeaderStyle"></FlexGrid>
+}
+
+@code {
+    private WeatherForecast[] forecasts;
+
+    public FlexGrid grid;
+    protected override async Task OnInitializedAsync()
+    {
+        forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("WeatherForecast");
+    }
+
+}
