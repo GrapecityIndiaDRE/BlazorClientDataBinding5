@@ -1,0 +1,63 @@
+﻿@page "/paging"
+@using BlazorDataBinding.Client.Models
+@using BlazorDataBinding.Shared
+@using C1.DataCollection
+@inject HttpClient Http
+<style>
+    .btn-circle {
+        width: 30px;
+        height: 30px;
+        padding: 6px 0px;
+        border-radius: 15px;
+        text-align: center;
+        font-size: 12px;
+        line-height: 1.42857;
+    }
+    .btn-circle:hover{
+        outline: 1px solid #007bff;
+    }
+    .c1DataPagerBtn:focus{
+        border:none !important;
+        outline:none !important;
+    }
+</style>
+
+<h3>Paged Data</h3>
+<C1TextBox Class="filled-text-box" @bind-Text="filterText" Style="@("width:100%;margin-bottom:5px;")"               Placeholder="Type to search..."  />
+<h3>@loadingMessage</h3>
+<FlexGrid  ItemsSource="@collection" Style="C1GridStyle.GridStyle" RowStyle="C1GridStyle.RowStyle" AlternatingRowStyle="C1GridStyle.AlternatingRowStyle" ColumnHeaderStyle = "C1GridStyle.ColumnHeaderStyle">
+    <FlexGridBehaviors>
+        <FullTextFilterBehavior FilterString="@filterText" />
+    </FlexGridBehaviors>
+</FlexGrid>
+<C1DataPager Source="collection" ButtonStyle="C1ButtonStyle.PagerButtonStyle" >
+    <PrevTemplate>
+        <span class="badge badge-pill badge-primary" style="@C1ButtonStyle.ButtonStyle">&#8592; &nbsp; Prev</span>
+    </PrevTemplate>
+    <NextTemplate>
+        <span class="badge badge-pill badge-primary" style="@C1ButtonStyle.ButtonStyle"> 	Next &nbsp; &#8594;</span>
+    </NextTemplate>
+    <PageNumberTemplate Context="pageNo">
+        @if(pageNo == collection.CurrentPage+1)
+        {
+            <span class="btn btn-primary btn-circle" style="@C1ButtonStyle.ActiveButtonStyle">@pageNo</span>
+        }else{
+            <span class="btn btn-default btn-circle" >@pageNo</span>
+        }
+    </PageNumberTemplate>
+</C1DataPager>
+
+ 
+@code {
+    string filterText="";
+    string loadingMessage;
+    C1DataPager pager;
+    C1PagedDataCollection<Customers> collection;
+    int VirtualPageSize = 15;
+    
+    protected override void OnInitialized()
+    {   
+        collection = new C1PagedDataCollection<Customers>(new CustomerVirtualDataCollection(){Http = Http, PageSize = VirtualPageSize }){PageSize = VirtualPageSize};
+    }
+}
+

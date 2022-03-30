@@ -1,0 +1,30 @@
+﻿@page "/virtual"
+@using BlazorDataBinding.Client.Models
+@using BlazorDataBinding.Shared
+@inject HttpClient Http
+
+<h3>VirtualData</h3>
+<C1TextBox Class="filled-text-box" @bind-Text="filterText" Style="@("width:100%;margin-bottom:5px;")"               Placeholder="Type to search..."  />
+
+<FlexGrid  ItemsSource="@collection" Style="C1GridStyle.GridStyle" RowStyle="C1GridStyle.RowStyle" AlternatingRowStyle="C1GridStyle.AlternatingRowStyle" ColumnHeaderStyle = "C1GridStyle.ColumnHeaderStyle">
+    <FlexGridBehaviors>
+        <FullTextFilterBehavior FilterString="@filterText" />
+    </FlexGridBehaviors>
+</FlexGrid>
+
+
+ 
+@code {
+    string filterText="";
+    string loadingMessage;
+
+    CustomerVirtualDataCollection collection;
+    int VirtualPageSize = 15;
+
+    protected override Task OnInitializedAsync()
+    {
+        collection = new CustomerVirtualDataCollection() {Http = Http, PageSize = VirtualPageSize };
+        return base.OnInitializedAsync();
+    }
+
+}
